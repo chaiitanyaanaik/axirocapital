@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#10b981",
+                        "primary-container": "#10b981",
+                        "on-primary": "#ffffff",
+                        "surface": "#f8fafc",
+                        "on-surface": "#0f172a",
+                        "outline": "#64748b",
+                        "surface-container": "#f1f5f9",
+                        "background": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "manrope": ["Manrope", "sans-serif"],
+                        "label-sm": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "display-xl": ["Manrope"],
+                        "body-md": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                        "display-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.03) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.03) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-number {
+            background-color: #064e3b;
+        }
+        .active-link {
+            color: #10b981;
+            border-bottom: 2px solid #10b981;
+        }
+    </style>
+</head>
+<body class="font-manrope text-on-surface">
+<!-- TopNavBar -->
+<nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-2xl border border-slate-200/60 bg-white/70 backdrop-blur-xl flex justify-between items-center px-8 py-3 z-50 shadow-sm">
+<div class="text-xl font-bold tracking-tight text-slate-900">Axiro Capital</div>
+<div class="hidden md:flex items-center gap-8 font-medium text-sm tracking-tight">
+<a class="text-slate-500 hover:text-primary transition-all duration-300" href="#">Services</a>
+<a class="active-link pb-1 transition-all duration-300" href="#">How It Works</a>
+<a class="text-slate-500 hover:text-primary transition-all duration-300" href="#">Portfolio</a>
+<a class="text-slate-500 hover:text-primary transition-all duration-300" href="#">Insights</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden lg:block text-slate-500 font-medium text-sm hover:text-primary transition-all">Client Login</button>
+<button class="bg-primary text-white px-6 py-2.5 rounded-xl font-medium text-sm active:scale-95 hover:bg-emerald-600 transition-all">Get Started</button>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-6 max-w-7xl mx-auto">
+<!-- Hero Section -->
+<header class="text-center mb-24 max-w-3xl mx-auto">
+<span class="inline-block px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-700 font-label-sm text-xs mb-6 border border-emerald-100">Execution Strategy</span>
+<h1 class="font-extrabold text-5xl md:text-6xl text-slate-900 mb-6 tracking-tight">Precision in Capital Deployment</h1>
+<p class="text-lg text-slate-500 leading-relaxed">Our structured approach ensures your institutional funding journey is transparent, predictable, and optimized for maximum liquidity at minimum cost.</p>
+</header>
+<!-- Process Phases -->
+<div class="space-y-40">
+<!-- Phase 1 -->
+<section class="grid lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-5">
+<div class="flex items-center gap-4 mb-8">
+<span class="w-10 h-10 flex items-center justify-center rounded-lg step-number text-white font-bold text-lg">1</span>
+<h2 class="text-3xl font-bold text-slate-900">Before You Apply</h2>
+</div>
+<p class="text-lg text-slate-500 mb-10">Strategic alignment begins before a single document is signed. We focus on readiness to ensure 100% success rates.</p>
+<div class="space-y-6">
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">Understand capital needs</h4>
+<p class="text-sm text-slate-500">Precise quantification of liquidity requirements.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">Evaluate financial readiness</h4>
+<p class="text-sm text-slate-500">Deep dive into balance sheets and projections.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">Review existing loans</h4>
+<p class="text-sm text-slate-500">Optimization of current debt structures.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">No CIBIL impact</h4>
+<p class="text-sm text-slate-500">Soft-pull assessments that protect your credit score.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7">
+<div class="bg-white rounded-3xl p-10 border border-slate-100 shadow-sm relative overflow-hidden">
+<div class="relative z-10 grid grid-cols-2 gap-6">
+<div class="p-6 bg-slate-50/50 rounded-2xl border border-slate-100">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="analytics">analytics</span>
+<div class="text-3xl font-bold text-slate-900 mb-1">98%</div>
+<div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Initial Fit Accuracy</div>
+</div>
+<div class="p-6 bg-slate-50/50 rounded-2xl border border-slate-100">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="timer">timer</span>
+<div class="text-3xl font-bold text-slate-900 mb-1">24h</div>
+<div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Discovery Window</div>
+</div>
+<div class="p-8 bg-slate-50/50 rounded-2xl border border-slate-100 col-span-2">
+<div class="h-32 w-full flex items-end gap-3 px-4">
+<div class="flex-1 bg-slate-200 rounded-lg h-12"></div>
+<div class="flex-1 bg-slate-200 rounded-lg h-24"></div>
+<div class="flex-1 bg-primary rounded-lg h-32"></div>
+<div class="flex-1 bg-slate-200 rounded-lg h-20"></div>
+</div>
+<div class="mt-6 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest">Optimized Readiness Benchmarking</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Phase 2 -->
+<section class="grid lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-7 order-2 lg:order-1">
+<div class="bg-white rounded-3xl p-10 border border-slate-100 shadow-sm relative">
+<div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#0f172a 1px, transparent 1px); background-size: 24px 24px;"></div>
+<div class="relative z-10 space-y-8">
+<div class="flex justify-between items-center">
+<div class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Lender Matching Algorithm</div>
+<div class="text-[10px] text-slate-400 font-medium">v2.4 Live</div>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold text-slate-600 px-1">
+<div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">account_balance</span> Bank A</div>
+<span>75% Match</span>
+</div>
+<div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="w-3/4 h-full bg-emerald-500"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold text-slate-600 px-1">
+<div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">corporate_fare</span> Institutional B</div>
+<span>100% Match</span>
+</div>
+<div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="w-full h-full bg-emerald-500"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-bold text-slate-600 px-1">
+<div class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">foundation</span> Fund C</div>
+<span>50% Match</span>
+</div>
+<div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="w-1/2 h-full bg-emerald-500"></div>
+</div>
+</div>
+</div>
+<p class="text-center text-[10px] text-slate-400 italic">Visualization: Algorithmic Selection of Primary Institutional Partners</p>
+</div>
+</div>
+</div>
+<div class="lg:col-span-5 order-1 lg:order-2">
+<div class="flex items-center gap-4 mb-8">
+<span class="w-10 h-10 flex items-center justify-center rounded-lg step-number text-white font-bold text-lg">2</span>
+<h2 class="text-3xl font-bold text-slate-900">During the Process</h2>
+</div>
+<p class="text-lg text-slate-500 mb-10">We manage the complexity of institutional paperwork and lender negotiation, acting as your outsourced treasury desk.</p>
+<div class="space-y-6">
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">Financial structuring</h4>
+<p class="text-sm text-slate-500">Custom architecture for complex capital needs.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">Credit memo creation</h4>
+<p class="text-sm text-slate-500">High-fidelity dossiers for immediate approval.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">Lender matching</h4>
+<p class="text-sm text-slate-500">Connecting your profile to the right risk-appetite.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">End-to-end follow-ups</h4>
+<p class="text-sm text-slate-500">Aggressive timeline management with stakeholders.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Phase 3 -->
+<section class="grid lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-5">
+<div class="flex items-center gap-4 mb-8">
+<span class="w-10 h-10 flex items-center justify-center rounded-lg step-number text-white font-bold text-lg">3</span>
+<h2 class="text-3xl font-bold text-slate-900">After Disbursement</h2>
+</div>
+<p class="text-lg text-slate-500 mb-10">Our relationship scales with your growth. Axiro Capital remains your strategic partner for lifelong capital optimization.</p>
+<div class="space-y-6">
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">Top-ups</h4>
+<p class="text-sm text-slate-500">Incremental funding as milestones are reached.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">Better rates</h4>
+<p class="text-sm text-slate-500">Continuous monitoring for refinancing opportunities.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="mt-1 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
+<span class="material-symbols-outlined text-primary text-[14px]">check</span>
+</div>
+<div>
+<h4 class="font-semibold text-slate-900">Higher limits</h4>
+<p class="text-sm text-slate-500">Pre-emptive limit expansion based on performance.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7">
+<div class="bg-white rounded-3xl p-10 border border-slate-100 shadow-sm relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="text-xl font-bold text-slate-900 text-center mb-12">Capital Growth Lifecycle</h3>
+<div class="flex justify-between items-end h-40 gap-6 mb-6">
+<div class="flex-1 bg-emerald-50 border border-emerald-100 rounded-xl flex flex-col items-center justify-center h-16 hover:scale-105 transition-transform duration-300">
+<span class="text-[10px] font-bold text-emerald-700">Year 1</span>
+<span class="text-[10px] text-emerald-600/70">₹10Cr</span>
+</div>
+<div class="flex-1 bg-emerald-100/50 border border-emerald-100 rounded-xl flex flex-col items-center justify-center h-24 hover:scale-105 transition-transform duration-300">
+<span class="text-[10px] font-bold text-emerald-800">Year 2</span>
+<span class="text-[10px] text-emerald-700/70">₹25Cr</span>
+</div>
+<div class="flex-1 bg-emerald-500 rounded-xl flex flex-col items-center justify-center h-36 hover:scale-105 transition-transform duration-300">
+<span class="text-[10px] font-bold text-white">Year 3</span>
+<span class="text-[10px] text-white/80">₹60Cr+</span>
+</div>
+</div>
+<p class="text-center text-[10px] text-slate-400 font-medium">Client Growth Averaging: 140% Y-o-Y Capital Expansion</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Advantage Section -->
+<section class="mt-48 bg-slate-50/50 rounded-[40px] p-12 lg:p-20 border border-slate-100 relative overflow-hidden">
+<div class="grid lg:grid-cols-2 gap-16 items-center">
+<div>
+<h2 class="text-4xl font-bold text-slate-900 mb-6">The Axiro Advantage</h2>
+<p class="text-lg text-slate-500 mb-12">Comparing industry-standard approval rates against the Axiro Capital execution model.</p>
+<div class="space-y-10">
+<div class="space-y-3">
+<div class="flex justify-between text-sm font-bold text-slate-400 uppercase tracking-wider">
+<span>Industry Standard</span>
+<span>42%</span>
+</div>
+<div class="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden">
+<div class="h-full bg-slate-400 w-[42%]"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between text-sm font-bold text-primary uppercase tracking-wider">
+<span>Axiro Capital Execution</span>
+<span>94%</span>
+</div>
+<div class="h-2.5 w-full bg-emerald-100 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-[94%]"></div>
+</div>
+</div>
+</div>
+<div class="mt-16 flex items-center gap-4">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[8px] font-bold">SM</div>
+<div class="w-8 h-8 rounded-full bg-slate-300 border-2 border-white flex items-center justify-center text-[8px] font-bold">AJ</div>
+<div class="w-8 h-8 rounded-full bg-slate-400 border-2 border-white flex items-center justify-center text-[8px] font-bold">RK</div>
+</div>
+<p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Trusted by 500+ High-Growth Enterprises</p>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -inset-10 bg-emerald-50 rounded-full blur-3xl opacity-50"></div>
+<div class="relative bg-white p-10 rounded-3xl border border-slate-100 shadow-sm">
+<div class="space-y-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="trending_up">trending_up</span>
+<span class="text-xs font-bold uppercase tracking-widest text-emerald-600">Approval Velocity</span>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="p-6 bg-slate-50/50 rounded-2xl">
+<div class="text-3xl font-bold text-slate-900 mb-1">11 Days</div>
+<div class="text-[10px] font-bold uppercase text-slate-400 tracking-tighter">Avg. Disbursement</div>
+</div>
+<div class="p-6 bg-slate-50/50 rounded-2xl">
+<div class="text-3xl font-bold text-slate-900 mb-1">₹500Cr+</div>
+<div class="text-[10px] font-bold uppercase text-slate-400 tracking-tighter">Liquidity Access</div>
+</div>
+</div>
+<div class="p-8 bg-[#064e3b] text-white rounded-2xl relative overflow-hidden">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] uppercase font-bold tracking-widest text-emerald-200">Final Assessment</span>
+<span class="material-symbols-outlined text-emerald-300" data-icon="verified_user">verified_user</span>
+</div>
+<div class="text-2xl font-bold mb-2">Institutional Ready</div>
+<p class="text-xs text-emerald-100/70 leading-relaxed">Your profile meets the risk parameters of 12+ tier-1 lenders.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="mt-40 text-center">
+<h2 class="text-4xl font-bold text-slate-900 mb-10">Ready for Execution?</h2>
+<div class="flex flex-wrap justify-center gap-4">
+<button class="bg-primary text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-emerald-600 transition-all active:scale-95">Apply for Funding</button>
+<button class="bg-white text-slate-900 border border-slate-200 px-10 py-4 rounded-xl font-bold text-lg hover:bg-slate-50 transition-all active:scale-95">Schedule Advisory</button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-slate-100 bg-white">
+<div class="max-w-7xl mx-auto py-12 px-8 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="text-lg font-bold text-slate-900">Axiro Capital</div>
+<div class="flex items-center gap-8 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">Disclosures</a>
+<a class="hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+<div class="text-[11px] text-slate-400 font-medium">© 2024 Axiro Capital. Institutional Excellence.</div>
+</div>
+</footer>
+<!-- Mobile Navigation -->
+<div class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md rounded-full border border-slate-200/50 bg-white/80 backdrop-blur-2xl flex justify-around items-center p-3 z-50 shadow-lg">
+<div class="flex flex-col items-center text-slate-400">
+<span class="material-symbols-outlined text-[20px]">home</span>
+<span class="text-[9px] font-bold uppercase tracking-widest mt-1">Home</span>
+</div>
+<div class="flex flex-col items-center text-slate-400">
+<span class="material-symbols-outlined text-[20px]">app_registration</span>
+<span class="text-[9px] font-bold uppercase tracking-widest mt-1">Apply</span>
+</div>
+<div class="flex flex-col items-center text-emerald-600 bg-emerald-50 rounded-full px-4 py-2">
+<span class="material-symbols-outlined text-[20px]">account_tree</span>
+<span class="text-[9px] font-bold uppercase tracking-widest mt-1">Process</span>
+</div>
+<div class="flex flex-col items-center text-slate-400">
+<span class="material-symbols-outlined text-[20px]">support_agent</span>
+<span class="text-[9px] font-bold uppercase tracking-widest mt-1">Support</span>
+</div>
+</div>
+</body></html>

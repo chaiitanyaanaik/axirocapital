@@ -1,0 +1,126 @@
+{
+  "version": "1.0.0",
+  "name": "msme-loan-insight-engine",
+  "principles": {
+    "deterministic": true,
+    "ai_controls_logic": false,
+    "gate1_question_count": {
+      "min": 6,
+      "max": 7,
+      "dynamic_skips": [
+        {
+          "if": {
+            "loan_status": "no_loan"
+          },
+          "skip": [
+            "interest_band"
+          ]
+        }
+      ]
+    }
+  },
+  "mvp_scenarios": [
+    "S1",
+    "S2",
+    "S4",
+    "S5",
+    "S6",
+    "S7",
+    "S9",
+    "S12",
+    "S14",
+    "S19",
+    "S23",
+    "S25"
+  ],
+  "tie_breaking": {
+    "step1": "cluster_priority",
+    "step2": "scenario_priority_within_cluster"
+  },
+  "confidence_formula": {
+    "inputs": [
+      "top_score_magnitude",
+      "gap_to_second_score",
+      "gate2_answer_certainty"
+    ],
+    "expression": "round(clamp(top,0,100)*0.58 + clamp((top-second)*0.6,0,30) + (certainty==='certain'?12:0))",
+    "range": [
+      0,
+      100
+    ]
+  },
+  "states": {
+    "collecting_inputs": {
+      "on": {
+        "gate1_answered": "collecting_inputs",
+        "gate1_completed": "awaiting_gate2"
+      }
+    },
+    "awaiting_gate2": {
+      "on": {
+        "gate2_answered": "refining_insight"
+      }
+    },
+    "refining_insight": {
+      "rules": [
+        "show_primary_lead_capture_if(confidence>=55 && lead_not_captured && !high_intent_skip)",
+        "if(gate2_answer='not_sure' && confidence<75) ask_second_gate2_question_once"
+      ],
+      "on": {
+        "lead_capture_shown": "awaiting_lead_capture",
+        "lead_skipped": "awaiting_gate3",
+        "high_intent_skip": "final_output"
+      }
+    },
+    "awaiting_lead_capture": {
+      "on": {
+        "lead_submitted": "awaiting_gate3",
+        "lead_submit_failed": "awaiting_gate3",
+        "lead_skipped": "awaiting_gate3"
+      }
+    },
+    "awaiting_gate3": {
+      "on": {
+        "gate3_answered": "final_output"
+      }
+    },
+    "final_output": {
+      "on": {
+        "final_output_ready": "final_output",
+        "cta_clicked": "final_output"
+      }
+    }
+  },
+  "output_contract": {
+    "required_fields": [
+      "primaryScenario",
+      "cluster",
+      "rootCause",
+      "confidence",
+      "insights",
+      "recommendedAction"
+    ]
+  },
+  "event_tracking": {
+    "events": [
+      "session_started",
+      "gate1_answered",
+      "gate1_completed",
+      "insight_revealed",
+      "gate2_question_served",
+      "gate2_answered",
+      "lead_capture_shown",
+      "lead_submitted",
+      "lead_submit_failed",
+      "lead_skipped",
+      "gate3_question_served",
+      "gate3_answered",
+      "final_output_ready",
+      "cta_clicked"
+    ],
+    "async_lead_submission": {
+      "event": "lead_submitted",
+      "retry_attempts": 2
+    }
+  }
+}

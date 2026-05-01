@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Analysis State - Institutional Benchmarking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface": "#f8f9fa",
+                        "on-secondary-fixed": "#3d0026",
+                        "primary-container": "#10b981",
+                        "surface-tint": "#006c49",
+                        "on-secondary-fixed-variant": "#85145a",
+                        "surface-variant": "#e1e3e4",
+                        "secondary-fixed-dim": "#ffafd3",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb2b9",
+                        "surface-container": "#edeeef",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d9dadb",
+                        "secondary-fixed": "#ffd8e7",
+                        "on-tertiary-fixed": "#400010",
+                        "on-tertiary-container": "#750626",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#191c1d",
+                        "on-surface-variant": "#3c4a42",
+                        "tertiary-fixed": "#ffdadc",
+                        "tertiary": "#a93349",
+                        "outline-variant": "#bbcabf",
+                        "tertiary-container": "#ff778a",
+                        "secondary": "#a43073",
+                        "on-secondary-container": "#76014e",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#4edea3",
+                        "surface-container-low": "#f3f4f5",
+                        "on-background": "#191c1d",
+                        "on-primary-fixed": "#002113",
+                        "inverse-surface": "#2e3132",
+                        "secondary-container": "#fc79bd",
+                        "primary": "#006c49",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed-variant": "#005236",
+                        "surface-container-high": "#e7e8e9",
+                        "primary-fixed": "#6ffbbe",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#4edea3",
+                        "error": "#ba1a1a",
+                        "outline": "#6c7a71",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#00422b",
+                        "background": "#f8f9fa",
+                        "on-tertiary-fixed-variant": "#891933"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "unit": "8px",
+                        "stack-sm": "12px",
+                        "margin-page": "64px",
+                        "gutter": "32px",
+                        "stack-lg": "48px",
+                        "stack-md": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Manrope"],
+                        "body-lg": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "display-xl": ["Manrope"],
+                        "label-sm": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                        "label-sm": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glassmorphic {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+        .mesh-gradient {
+            background-color: #f8f9fa;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+        }
+        .pulse-emerald {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            animation: pulse-emerald 3s infinite cubic-bezier(0.66, 0, 0, 1);
+        }
+        @keyframes pulse-emerald {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 40px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="mesh-gradient min-h-screen font-body-md text-on-surface">
+<!-- Top Navigation Anchor (Shared Component: TopAppBar) -->
+<header class="fixed top-0 w-full z-50 border-b border-white/20 bg-white/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.05)]">
+<nav class="flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-emerald-500" data-icon="arrow_back">arrow_back</span>
+<span class="font-manrope text-sm font-semibold tracking-tight text-slate-400">Step 1 of 5</span>
+</div>
+<div class="text-emerald-600 font-bold text-lg">Institutional Core</div>
+<div>
+<span class="material-symbols-outlined text-slate-400" data-icon="close">close</span>
+</div>
+</nav>
+</header>
+<main class="flex items-center justify-center min-h-screen px-margin-page">
+<!-- Central Glass Container -->
+<div class="w-full max-w-[640px] flex flex-col items-center text-center space-y-stack-lg">
+<!-- Animated Loading Cluster -->
+<div class="relative flex items-center justify-center">
+<!-- Outer Pulse Glow -->
+<div class="absolute w-48 h-48 rounded-full pulse-emerald opacity-20"></div>
+<!-- Inner Glass Circle -->
+<div class="relative w-32 h-32 rounded-full glassmorphic flex items-center justify-center border-emerald-500/10">
+<div class="w-24 h-24 rounded-full border-[3px] border-emerald-500/10 border-t-emerald-500 animate-[spin_3s_linear_infinite]"></div>
+<div class="absolute">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="insights" style="font-variation-settings: 'FILL' 1;">insights</span>
+</div>
+</div>
+</div>
+<!-- Contextual Messaging -->
+<div class="space-y-stack-sm">
+<h1 class="font-headline-md text-headline-md text-on-surface">Analyzing your responses...</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[480px]">
+                    Comparing with current institutional benchmarks to generate your personalized trajectory.
+                </p>
+</div>
+<!-- Bento Status Indicators -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md w-full mt-stack-lg">
+<!-- Status Card 1 -->
+<div class="glassmorphic p-stack-md rounded-xl flex items-center gap-4 text-left border-white/40">
+<div class="bg-primary/10 p-3 rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="data_exploration">data_exploration</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-primary uppercase">Activity</p>
+<p class="font-body-md text-body-md text-on-surface">Data Normalization</p>
+</div>
+</div>
+<!-- Status Card 2 -->
+<div class="glassmorphic p-stack-md rounded-xl flex items-center gap-4 text-left border-white/40">
+<div class="bg-primary/10 p-3 rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-primary uppercase">Metric</p>
+<p class="font-body-md text-body-md text-on-surface">Institutional Fitment</p>
+</div>
+</div>
+</div>
+<!-- Background Decorative Image -->
+<div class="fixed inset-0 -z-10 pointer-events-none opacity-40">
+<div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px]"></div>
+<img class="w-full h-full object-cover mix-blend-overlay opacity-10" data-alt="abstract architectural visualization of high-end glass building interior with soft natural lighting and minimalist emerald green accents for institutional trust" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-cyivTt3PA2pjfUN-EHQac95W_Y9SjFJvoUU4MuZCRfcgui2V4IPjJnyiv7tD4NmrZllfkknY23iFE8Lsup76uce2wRgoz9G5q2vt-RBhIxkE6MnnnocMW811Kcsu4stl7pPiDrKU_R7WfTV4b1JiVbaqEW1DXU2PeYdXHo7Uny-S0H3bwLC4E2lTIEjKIcdS5idIggOsLHOpADDSnH2ZCGgr6h6b0MNzePo_qq3zgb2Ye_J4TZPmh3-YxEPQkjMsJG03-D11VwU"/>
+</div>
+<!-- Bottom Progress Hint -->
+<div class="pt-stack-lg w-full">
+<div class="h-[2px] w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[65%] animate-[progress_10s_ease-in-out_infinite]"></div>
+</div>
+<div class="flex justify-between mt-2">
+<span class="font-label-sm text-label-sm text-slate-400">Processing Node: LDN-04</span>
+<span class="font-label-sm text-label-sm text-slate-400">Est. 4s remaining</span>
+</div>
+</div>
+</div>
+</main>
+<style>
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+    </style>
+</body></html>
