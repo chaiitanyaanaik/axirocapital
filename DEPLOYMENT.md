@@ -25,6 +25,55 @@ From the project root:
 5. Validate domain alias:
    - Confirm deployment is aliased to `https://axirocapital.com`
 
+## Git and GitHub
+
+Source repo: **`https://github.com/chaiitanyaanaik/axirocapital`** (adjust if renamed).
+
+### First-time link from this machine
+
+If `git remote -v` is empty, add the real repo URL (not a placeholder):
+
+```bash
+git remote add origin https://github.com/chaiitanyaanaik/axirocapital.git
+```
+
+If `origin` already exists but points at the wrong URL:
+
+```bash
+git remote set-url origin https://github.com/chaiitanyaanaik/axirocapital.git
+```
+
+Push your default branch (this project has used `master`; GitHub may use `main`):
+
+```bash
+git push -u origin master
+# or: git branch -M main && git push -u origin main
+```
+
+### HTTPS authentication (Personal Access Token)
+
+GitHub does **not** accept your normal account password for `git push` over HTTPS. Use a **Personal Access Token** when Git asks for a **Password**.
+
+- **Fine-grained token:** under **Repository permissions**, add **Contents: Read and write** for `chaiitanyaanaik/axirocapital` (and **Metadata: Read-only** if offered). “Only select repositories” is fine once those permissions are added.
+- **Classic token:** enable the **`repo`** scope.
+
+If Git returns **403** or “Permission denied”, the token usually lacks **write** access or macOS **Keychain** is caching an old password. Clear GitHub entries in **Keychain Access** (search `github.com`), or run:
+
+```bash
+printf 'protocol=https\nhost=github.com\n\n' | git credential-osxkeychain erase
+```
+
+Then push again and paste a **new** token at the password prompt.
+
+### SSH (optional)
+
+```bash
+git remote set-url origin git@github.com:chaiitanyaanaik/axirocapital.git
+git push -u origin master
+```
+
+Requires an SSH key added under GitHub → **Settings → SSH and GPG keys**.
+
 ## Vercel environment variables (production)
 
 Set these in Vercel **Project → Settings → Environment Variables** for Production (and Preview if you use preview deployments):

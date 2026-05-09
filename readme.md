@@ -51,6 +51,8 @@ This workspace is linked to Vercel project `axiro`.
 - Vercel project:
   - `axiro` (team: `chaiitanyaa09-5108s-projects`)
 
+**GitHub:** `https://github.com/chaiitanyaanaik/axirocapital` — pushing over HTTPS needs a **Personal Access Token** (fine-grained: **Contents: Read and write** on that repo). Full steps, Keychain/403 fixes, and SSH: see **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+
 ## Domain Mapping (`axirocapital.com`)
 
 Custom domain mapping is configured through Vercel + Squarespace DNS.
