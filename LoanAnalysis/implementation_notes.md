@@ -75,6 +75,16 @@ Important:
 
 ## Lead API and Persistence
 
+### Production vs preview / test leads (`leads.env`)
+
+- Table `public.leads` includes `env text not null default 'production'`.
+- On insert/upsert, APIs set `env` from `process.env.VERCEL_ENV` when present (`production` | `preview` | `development`), otherwise from `NODE_ENV` (`production` vs `development`).
+- Files:
+  - `app/api/eligibility/lead/route.ts`
+  - `app/api/loan-insight/lead/route.ts`
+- Admin listing (`GET /api/admin/leads`) filters to `env = 'production'` and `source = 'eligibility'` so preview deployments and local test rows do not mix into the production leads view.
+- Schema and migration (including backfill and safe index order): `LoanAnalysis/supabase_schema.sql`.
+
 - Lead endpoint:
   - `app/api/loan-insight/lead/route.ts`
 - AI enrichment endpoint:
@@ -138,6 +148,20 @@ Primary files:
 - Lead + score APIs:
   - `app/api/eligibility/calculate/route.ts`
   - `app/api/eligibility/lead/route.ts`
+
+### Admin
+
+- `app/admin/login/page.tsx`, `app/admin/leads/page.tsx`
+- Session: `lib/admin/auth.ts`
+- Leads API: `app/api/admin/leads/route.ts`
+- Funnel events API: `app/api/admin/funnel-events/route.ts` (partial Fast Capital / loan-quote telemetry)
+
+### Fast Capital funnel tracking (loan-quote + fast-capital)
+
+- Shared UI: `components/fast-capital/FastCapitalLeadFlow.tsx` (used on `/loan-quote` and `/fast-capital`).
+- Public ingest: `POST /api/funnel/event` → `public.loan_insight_events` with `event_name` `fast_capital_progress` | `fast_capital_abandon`.
+- Each row’s `payload` includes `app_env` (from `getDeploymentEnv()`) plus form progress; contact fields are stored in `payload` for admin review (PII).
+- GA4: `trackEvent` for flow milestones only (no PII in GA params).
 
 Current behavior:
 

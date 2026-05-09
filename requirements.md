@@ -15,22 +15,7 @@ The site must include and maintain the following routes:
 
 ## Current Status
 
-All five required pages are implemented in the Next.js App Router.
-
-## Reference Sources
-
-Each route has a corresponding reference folder:
-
-- `Home/`
-- `About/`
-- `Services/`
-- `How it works/`
-- `Contact/`
-
-Reference folders include:
-
-- `code.html` for structure and animation direction
-- Optional supporting files (assets or design notes)
+All required pages are implemented in the Next.js App Router.
 
 ## Route Structure Contract
 
@@ -68,10 +53,11 @@ Current navbar contract:
 The Home page should currently maintain the following:
 
 - Source of truth: `components/home/HomePage.tsx`
-- Hero heading: `Stop chasing your bank`
-- Hero trust tag: `Trust by growing businesses across India`
-- Hero primary action: `Check My Eligibility` -> `/eligibility`
-- Hero secondary action: `Book a 15-Minute Strategy Call` -> `/contact`
+- Hero heading: `Stop chasing lenders` + `Get working capital faster`
+- Hero trust tag: `Trusted by growing businesses across India`
+- Nav action `Check Eligibility`: `/loan-quote`
+- Hero primary action: `Check My Eligibility` -> `/loan-quote` with UTMs (`utm_source`, `utm_medium`, `utm_campaign`)
+- No secondary hero CTA in hero (single primary action)
 - Include `How this works` section directly below hero
 - Keep footer minimal and aligned to landing-style layout
 
@@ -97,6 +83,9 @@ The Home page must remain usable and visually stable on mobile:
 - Security:
   - production lead writes must fail if `LEADS_ENCRYPTION_KEY` missing
   - no silent plaintext lead storage in production
+- Data separation:
+  - `public.leads.env` records deployment context (`production` | `preview` | `development`)
+  - admin eligibility leads view (`/admin/leads`) must only list `env = production` rows
 - Health endpoint:
   - `/api/loan-insight/health` must report encryption readiness by environment
 

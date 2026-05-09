@@ -74,21 +74,38 @@ Custom domain mapping is configured through Vercel + Squarespace DNS.
 - `/contact` - Contact
 - `/loan-insight` - MSME Loan Insight flow
 - `/eligibility` - 5-step lender-facing eligibility pre-check
-- `/fast-capital` - Fast-capital campaign landing (eligibility CTA + Calendly for case review)
+- `/eligibility/result` - Eligibility result (client state; wrap in Suspense for static generation)
+- `/loan-quote` - Loan quote / fast-capital style form entry (alternate path)
+- `/fast-capital` - Fast-capital campaign landing and lead flow
+- `/fast-capital/result` - Fast-capital indicative result (session storage)
+- `/admin/login` - Admin authentication
+- `/admin/leads` - Eligibility leads table (production `env` only; requires admin session + Supabase)
+
+### Route-first change requests
+
+When requesting copy/UI updates, use route paths to avoid ambiguity.
+
+Example format:
+
+- `Route`: `/fast-capital/result`
+- `Section`: hero / CTA / form / footer
+- `Current text`: `...`
+- `New text`: `...`
+- `Scope`: this page only / all pages
 
 ## Current UI Notes
 
-- Home page (`/`) is the locked, final V3-based landing page source in `components/home/HomePage.tsx`
+- Home page (`/`) source of truth is `components/home/HomePage.tsx`
 - Home uses native scrolling without reveal-on-scroll hook
 - Home top nav is embedded on the page and intentionally simplified:
   - brand + primary action only (`Check Eligibility`)
   - page links are hidden for now
-- Home hero direction is based on `Home/v3.html` with mobile refinements from `Home/mobile_L.html`
-  - Headline: `Stop chasing lenders`
-  - Subheadline: `Most loans don't fail because the business is weak. They fail because the case isn't structured the way lenders evaluate risk.`
-  - Primary hero CTA: `Check My Eligibility` -> `/eligibility`
-  - Secondary hero CTA: `REVIEW MY CASE` -> `https://calendly.com/chaiitanyaanaik/30min`
-- Home includes a dedicated `How this works` section below hero based on `Home/howitworks.html`
+- Home hero currently uses:
+  - Headline: `Stop chasing lenders` + `Get working capital faster`
+  - Subheadline: `Built for GST-registered businesses with ₹1 Cr+ annual revenue`
+  - Nav `Check Eligibility`: `/loan-quote`
+  - Primary hero CTA `Check My Eligibility`: `/loan-quote` with UTM params (`utm_source=axirocapital.com`, `utm_medium=homepage`, `utm_campaign=check_eligibility`)
+- Home includes a dedicated `How this works` section below hero
 - Home footer is intentionally minimal (`© 2026 Axiro Capital`) with policy/terms/disclosure links removed
 - `/loan-insight` flow nav intentionally hides links for focus
 
@@ -104,6 +121,7 @@ Custom domain mapping is configured through Vercel + Squarespace DNS.
 - Lead persistence:
   - Supabase/Postgres via `lib/supabase/server.ts`
   - schema reference in `LoanAnalysis/supabase_schema.sql`
+  - each lead row includes `env` (`production`, `preview`, or `development`) derived from `VERCEL_ENV` or `NODE_ENV` so production admin can filter test/preview data
 - Security and privacy:
   - production requires `LEADS_ENCRYPTION_KEY` for lead writes
   - non-production supports explicit plaintext fallback with warning logs
@@ -149,7 +167,6 @@ Custom domain mapping is configured through Vercel + Squarespace DNS.
 - `components/` - Reusable UI and page sections
 - `hooks/` - Shared React hooks
 - `lib/` - Utilities and shared logic
-- `Home/`, `About/`, `Services/`, `How it works/`, `Contact/` - Reference HTML and design sources
 - `DESIGN.md` - Visual system and style guidance
 - `requirements.md` - Page and product requirements
 
@@ -172,15 +189,22 @@ Follow `DESIGN.md` for visual consistency.
 
 ## Analytics
 
-GA4 is enabled for production tracking.
+GA4 + Google Ads tags are enabled for production tracking.
 
-- Environment variable: `NEXT_PUBLIC_GA_ID=G-KD9LLNPR9D`
+- Environment variable: `NEXT_PUBLIC_GA_ID=G-0XGQXS7S9G`
+- Environment variable: `NEXT_PUBLIC_GOOGLE_ADS_ID=AW-18148537495`
 - Tracking is initialized from app layout and page views are tracked by route
 
 ## Environment Variables
 
+See `.env.example` for a template. Summary:
+
 - `NEXT_PUBLIC_GA_ID` - GA4 measurement ID
+- `NEXT_PUBLIC_GOOGLE_ADS_ID` - Google Ads tag ID (for example `AW-18148537495`)
 - `SUPABASE_URL` - Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY` - server-side Supabase key for API writes
-- `LEADS_ENCRYPTION_KEY` - base64-encoded 32-byte key (required in production for lead writes)
+- `LEADS_ENCRYPTION_KEY` - base64-encoded 32-byte key (required in production for loan-insight lead writes)
 - `MONITORING_ALERT_WEBHOOK_URL` - optional critical alert webhook for encryption/persistence failures
+- `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET` - admin console at `/admin/*`
+
+`VERCEL_ENV` is injected on Vercel only; you do not set it locally. It drives the `leads.env` column for environment separation.

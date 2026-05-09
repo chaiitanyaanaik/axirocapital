@@ -1,9 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 
+import { getDeploymentEnv } from "@/lib/admin/deploymentEnv";
 import { encryptPhone, hashForIdempotency } from "@/lib/loanInsight/crypto";
 import { hashPhone, maskPhone } from "@/lib/loanInsight/privacy";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
+import { validateIndianMobile } from "@/lib/validation/mobile";
 
 type LeadRequest = {
   session_id: string;
@@ -36,6 +38,7 @@ export async function POST(req: Request) {
   const score = body.score ?? NaN;
   const phone = body.lead_metadata?.phone?.trim() ?? "";
   const name = body.lead_metadata?.name?.trim() ?? "";
+  const phoneValidation = validateIndianMobile(phone);
 
   if (
     !body.session_id ||
@@ -46,7 +49,7 @@ export async function POST(req: Request) {
     !isValidBucket(credit, 1, 4) ||
     !isValidBucket(tier, 1, 4) ||
     !name ||
-    phone.replace(/\D/g, "").length < 10
+    !phoneValidation.isValid
   ) {
     return NextResponse.json(
       { ok: false, error: "Invalid payload for eligibility lead capture." },
@@ -55,7 +58,8 @@ export async function POST(req: Request) {
   }
 
   const leadId = randomUUID();
-  const phoneHash = hashPhone(phone);
+  const leadEnv = getDeploymentEnv();
+  const phoneHash = hashPhone(phoneValidation.normalized10);
   const idempotencyKey = hashForIdempotency(body.session_id, phoneHash);
   const createdAt = new Date().toISOString();
   const supabase = getSupabaseAdminClient();
@@ -72,11 +76,12 @@ export async function POST(req: Request) {
   const { error } = await supabase.from("leads").upsert(
     {
       id: leadId,
-      phone_encrypted: encryptPhone(phone),
+      phone_encrypted: encryptPhone(phoneValidation.normalized10),
       phone_hash: phoneHash,
       session_id: body.session_id,
       user_id: null,
       idempotency_key: idempotencyKey,
+      env: leadEnv,
       source: "eligibility",
       lead_stage: "eligibility_result",
       top_scenarios: null,
@@ -116,9 +121,10 @@ export async function POST(req: Request) {
     event_name: "eligibility_lead_submitted",
     payload: {
       lead_id: leadId,
-      phone_masked: maskPhone(phone),
+      phone_masked: maskPhone(phoneValidation.normalized10),
       tier,
       score,
+      app_env: leadEnv,
     },
     created_at: createdAt,
   });
@@ -126,6 +132,6 @@ export async function POST(req: Request) {
   return NextResponse.json({
     ok: true,
     lead_id: leadId,
-    phone_masked: maskPhone(phone),
+    phone_masked: maskPhone(phoneValidation.normalized10),
   });
 }

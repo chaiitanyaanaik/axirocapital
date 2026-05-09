@@ -24,6 +24,15 @@ export function FastCapitalQuotePage() {
         <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-emerald-200/40 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-20 -right-16 h-56 w-56 rounded-full bg-sky-100/40 blur-3xl" />
         <div className="mx-auto max-w-4xl">
+          <div className="mx-auto mb-5 inline-flex max-w-full items-center justify-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/90 px-3 py-1.5 text-xs font-semibold text-emerald-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:mb-6 sm:px-4 sm:py-2 sm:text-sm">
+            <span
+              className="material-symbols-outlined text-[18px] text-emerald-600"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              verified
+            </span>
+            <span>For GST business with ₹1 CR+ annual turnover</span>
+          </div>
           <h1 className="text-[2.15rem] font-extrabold leading-[1.05] tracking-tight text-slate-900 [text-wrap:balance] sm:text-5xl sm:leading-[1.08] lg:text-[56px] lg:tracking-[-0.02em]">
             {heroBankHeadlinePrefix}
           </h1>

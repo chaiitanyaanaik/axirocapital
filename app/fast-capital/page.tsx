@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   description: pageMetaDescription,
 };
 
+export const dynamic = "force-dynamic";
+
 export default function FastCapitalPage() {
   return <FastCapitalLandingPage />;
 }

@@ -5,6 +5,7 @@ create table if not exists public.leads (
   session_id text not null,
   user_id text null,
   idempotency_key text not null,
+  env text not null default 'production',
   source text null default 'loan_insight',
   lead_stage text null check (lead_stage in ('gate2', 'gate3', 'eligibility_result')),
   top_scenarios text[] null,
@@ -19,6 +20,7 @@ create unique index if not exists leads_phone_session_unique
 create unique index if not exists leads_idempotency_key_unique
   on public.leads (idempotency_key);
 
+-- Event rows may include payload.app_env (production | preview | development) for filtering; no separate column required.
 create table if not exists public.loan_insight_events (
   id uuid primary key default gen_random_uuid(),
   event_id text not null unique,
@@ -67,6 +69,10 @@ create policy loan_insight_events_select_policy
 -- If table already existed with older lead_stage constraint, migrate it safely.
 do $$
 begin
+  alter table public.leads add column if not exists env text;
+  update public.leads set env = 'production' where env is null;
+  alter table public.leads alter column env set default 'production';
+  alter table public.leads alter column env set not null;
   alter table public.leads drop constraint if exists leads_lead_stage_check;
   alter table public.leads
     add constraint leads_lead_stage_check
@@ -75,3 +81,8 @@ exception
   when undefined_table then
     null;
 end $$;
+
+-- Index after env column exists (avoids errors on existing DBs where create table did not add env).
+create index if not exists leads_env_created_idx
+  on public.leads (env, created_at desc);
+

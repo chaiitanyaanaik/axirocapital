@@ -17,8 +17,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
   const shouldLoadAnalytics =
-    process.env.NODE_ENV === "production" && Boolean(GA_MEASUREMENT_ID);
+    process.env.NODE_ENV === "production" && Boolean(GA_MEASUREMENT_ID || GOOGLE_ADS_ID);
+  const gtagLoaderId = GA_MEASUREMENT_ID || GOOGLE_ADS_ID;
+  const shouldTrackPageViews = Boolean(GA_MEASUREMENT_ID);
+  const gtagInitScript = `
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    ${GA_MEASUREMENT_ID ? `gtag('config', '${GA_MEASUREMENT_ID}');` : ""}
+    ${GOOGLE_ADS_ID ? `gtag('config', '${GOOGLE_ADS_ID}');` : ""}
+  `;
 
   return (
     <html lang="en">
@@ -36,24 +47,18 @@ export default function RootLayout({
         {shouldLoadAnalytics ? (
           <>
             <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              src={`https://www.googletagmanager.com/gtag/js?id=${gtagLoaderId}`}
               strategy="afterInteractive"
             />
-            <Script id="google-analytics-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                window.gtag = gtag;
-                gtag('js', new Date());
-                gtag('config', '${GA_MEASUREMENT_ID}');
-              `}
+            <Script id="google-tag-init" strategy="afterInteractive">
+              {gtagInitScript}
             </Script>
           </>
         ) : null}
       </head>
       <body className="antialiased">
         {children}
-        {shouldLoadAnalytics ? (
+        {shouldLoadAnalytics && shouldTrackPageViews ? (
           <Suspense fallback={null}>
             <GoogleAnalytics />
           </Suspense>

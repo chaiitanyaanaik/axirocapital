@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 
 import { ELIGIBILITY_QUESTIONS } from "@/lib/eligibility/questionnaire";
 import { calculateEligibilityResult, mapFastCapitalAnswersToBuckets } from "@/lib/eligibility/scoring";
+import { trackEvent } from "@/lib/gtag";
+import { normalizeToIndianMobile10, validateIndianMobile } from "@/lib/validation/mobile";
 
 import { formCopy } from "./copy";
 
@@ -26,8 +28,48 @@ const fieldLabelClass = "mb-1.5 block text-sm font-semibold text-slate-900";
 const fieldControlClass =
   "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100";
 
+const PROGRESS_DEBOUNCE_MS = 3500;
+
+const postFunnelEvent = async (
+  eventName: "fast_capital_progress" | "fast_capital_abandon",
+  payload: Record<string, unknown>,
+) => {
+  try {
+    await fetch("/api/funnel/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId, event_name: eventName, payload }),
+    });
+  } catch {
+    /* non-blocking */
+  }
+};
+
+const sendFunnelAbandonBeacon = (payload: Record<string, unknown>) => {
+  try {
+    const body = JSON.stringify({
+      session_id: sessionId,
+      event_name: "fast_capital_abandon",
+      payload,
+    });
+    const blob = new Blob([body], { type: "application/json" });
+    if (typeof navigator !== "undefined" && navigator.sendBeacon("/api/funnel/event", blob)) {
+      return;
+    }
+    void fetch("/api/funnel/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+      keepalive: true,
+    });
+  } catch {
+    /* ignore */
+  }
+};
+
 export function FastCapitalLeadFlow() {
   const router = useRouter();
+  const pagePath = usePathname() ?? "";
   const [phase, setPhase] = useState<FlowPhase>("step1");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -38,10 +80,11 @@ export function FastCapitalLeadFlow() {
   const [emi, setEmi] = useState<string | null>(null);
 
   const normalizedName = name.trim();
-  const normalizedPhone = phone.replace(/\D/g, "");
+  const phoneValidation = useMemo(() => validateIndianMobile(phone), [phone]);
+  const normalizedPhone = phoneValidation.normalized10;
   const normalizedEmail = email.trim();
   const isNameValid = normalizedName.length >= 2;
-  const isPhoneValid = /^[6-9]\d{9}$/.test(normalizedPhone);
+  const isPhoneValid = phoneValidation.isValid;
   const isEmailValid =
     normalizedEmail.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail);
 
@@ -63,6 +106,174 @@ export function FastCapitalLeadFlow() {
     () => (buckets ? calculateEligibilityResult(buckets) : null),
     [buckets],
   );
+
+  const flowStartedRef = useRef(false);
+  const abandonSentRef = useRef(false);
+  const leadSavedRef = useRef(false);
+  const suppressAbandonRef = useRef(false);
+  const prevPhaseRef = useRef<FlowPhase | null>(null);
+
+  const coarseProgress = useMemo(() => {
+    let fieldsStartedCount = 0;
+    if (normalizedName.length > 0) fieldsStartedCount += 1;
+    if (phone.trim().length > 0) fieldsStartedCount += 1;
+    if (turnover !== null) fieldsStartedCount += 1;
+    if (vintage !== null) fieldsStartedCount += 1;
+    if (company.trim().length > 0) fieldsStartedCount += 1;
+    if (emi !== null) fieldsStartedCount += 1;
+    if (normalizedEmail.length > 0) fieldsStartedCount += 1;
+
+    const phoneForPayload = normalizeToIndianMobile10(phone);
+    const contact_phone = phoneForPayload.length > 0 ? phoneForPayload.slice(0, 10) : null;
+
+    return {
+      page_path: pagePath || "/",
+      phase,
+      fields_started_count: fieldsStartedCount,
+      has_name_input: normalizedName.length > 0,
+      has_phone_input: phone.trim().length > 0,
+      has_company_input: company.trim().length > 0,
+      has_email_input: normalizedEmail.length > 0,
+      turnover_key: turnover,
+      vintage_key: vintage,
+      emi_key: emi,
+      step1_complete: step1Complete,
+      step2_complete: step2Complete,
+      contact_name: normalizedName.length > 0 ? normalizedName : null,
+      contact_email: normalizedEmail.length > 0 ? normalizedEmail : null,
+      contact_phone,
+      company_name: company.trim().length > 0 ? company.trim() : null,
+    };
+  }, [
+    pagePath,
+    phase,
+    normalizedName,
+    phone,
+    turnover,
+    vintage,
+    company,
+    emi,
+    normalizedEmail,
+    step1Complete,
+    step2Complete,
+  ]);
+
+  useEffect(() => {
+    if (typeof sessionStorage === "undefined") return;
+    if (sessionStorage.getItem(`axiro-fc-lead-${sessionId}`) === "1") {
+      leadSavedRef.current = true;
+    }
+    if (sessionStorage.getItem(`axiro-fc-abandon-${sessionId}`) === "1") {
+      abandonSentRef.current = true;
+    }
+  }, []);
+
+  const hasInteraction = useMemo(
+    () =>
+      normalizedName.length > 0 ||
+      phone.trim().length > 0 ||
+      company.trim().length > 0 ||
+      normalizedEmail.length > 0 ||
+      turnover !== null ||
+      vintage !== null ||
+      emi !== null,
+    [normalizedName, phone, company, normalizedEmail, turnover, vintage, emi],
+  );
+
+  useEffect(() => {
+    if (!hasInteraction || flowStartedRef.current) return;
+    flowStartedRef.current = true;
+    trackEvent("fast_capital_flow_started", {
+      page_path: pagePath || "/",
+      session_id: sessionId,
+    });
+  }, [hasInteraction, pagePath]);
+
+  useEffect(() => {
+    if (prevPhaseRef.current === null) {
+      prevPhaseRef.current = phase;
+      return;
+    }
+    if (prevPhaseRef.current === phase) return;
+    prevPhaseRef.current = phase;
+    trackEvent("fast_capital_phase", {
+      phase,
+      page_path: pagePath || "/",
+      session_id: sessionId,
+    });
+    void postFunnelEvent("fast_capital_progress", { ...coarseProgress });
+  }, [phase, pagePath, coarseProgress]);
+
+  useEffect(() => {
+    if (!hasInteraction) return;
+    const t = window.setTimeout(() => {
+      if (!flowStartedRef.current || abandonSentRef.current || leadSavedRef.current) return;
+      trackEvent("fast_capital_field_progress", {
+        page_path: pagePath || "/",
+        session_id: sessionId,
+        fields_started_count: coarseProgress.fields_started_count,
+        turnover_selected: turnover !== null,
+        vintage_selected: vintage !== null,
+        emi_selected: emi !== null,
+        step1_complete: step1Complete,
+        step2_complete: step2Complete,
+        has_name_input: coarseProgress.has_name_input,
+        has_phone_input: coarseProgress.has_phone_input,
+        has_company_input: coarseProgress.has_company_input,
+        has_email_input: coarseProgress.has_email_input,
+      });
+      void postFunnelEvent("fast_capital_progress", { ...coarseProgress });
+    }, PROGRESS_DEBOUNCE_MS);
+    return () => window.clearTimeout(t);
+  }, [
+    coarseProgress,
+    pagePath,
+    turnover,
+    vintage,
+    emi,
+    step1Complete,
+    step2Complete,
+    hasInteraction,
+  ]);
+
+  useEffect(() => {
+    const fireAbandon = () => {
+      if (
+        !flowStartedRef.current ||
+        leadSavedRef.current ||
+        abandonSentRef.current ||
+        suppressAbandonRef.current
+      ) {
+        return;
+      }
+      abandonSentRef.current = true;
+      if (typeof sessionStorage !== "undefined") {
+        sessionStorage.setItem(`axiro-fc-abandon-${sessionId}`, "1");
+      }
+      const lastPhase = phase;
+      trackEvent("fast_capital_abandon", {
+        page_path: pagePath || "/",
+        session_id: sessionId,
+        last_phase: lastPhase,
+      });
+      sendFunnelAbandonBeacon({
+        ...coarseProgress,
+        last_phase: lastPhase,
+      });
+    };
+
+    const onHidden = () => {
+      if (document.visibilityState !== "hidden") return;
+      fireAbandon();
+    };
+
+    document.addEventListener("visibilitychange", onHidden);
+    window.addEventListener("pagehide", fireAbandon);
+    return () => {
+      document.removeEventListener("visibilitychange", onHidden);
+      window.removeEventListener("pagehide", fireAbandon);
+    };
+  }, [phase, pagePath, coarseProgress]);
 
   useEffect(() => {
     if (phase !== "analysis" || !buckets) return;
@@ -101,6 +312,7 @@ export function FastCapitalLeadFlow() {
           typeof sessionStorage !== "undefined" && sessionStorage.getItem(storageKey) === "1";
         if (alreadyPosted) {
           leadSubmitted = true;
+          leadSavedRef.current = true;
         } else {
           try {
             const response = await fetch("/api/eligibility/lead", {
@@ -124,6 +336,13 @@ export function FastCapitalLeadFlow() {
                 sessionStorage.setItem(storageKey, "1");
               }
               leadSubmitted = true;
+              leadSavedRef.current = true;
+              trackEvent("fast_capital_lead_saved", {
+                page_path: pagePath || "/",
+                session_id: sessionId,
+                tier: resolvedResult.tier,
+                score: resolvedResult.score,
+              });
             } else {
               const payload = (await response.json()) as { error?: string; detail?: string };
               const detail = payload.detail ? ` (${payload.detail})` : "";
@@ -148,6 +367,7 @@ export function FastCapitalLeadFlow() {
           }),
         );
       }
+      suppressAbandonRef.current = true;
       router.push(`/fast-capital/result?sid=${sessionId}`);
     })();
 
@@ -166,6 +386,7 @@ export function FastCapitalLeadFlow() {
     normalizedPhone,
     normalizedEmail,
     company,
+    pagePath,
   ]);
 
   const goStep2 = () => {
@@ -273,8 +494,10 @@ export function FastCapitalLeadFlow() {
               placeholder="10-digit mobile number"
               value={phone}
             />
-            {!isPhoneValid && phone.replace(/\D/g, "").length > 0 ? (
-              <p className="mt-1 text-xs text-red-600">Valid 10-digit Indian mobile starting with 6–9.</p>
+            {!isPhoneValid && phone.trim().length > 0 ? (
+              <p className="mt-1 text-xs text-red-600">
+                {phoneValidation.error ?? "Enter a valid mobile number."}
+              </p>
             ) : null}
           </div>
           <div>

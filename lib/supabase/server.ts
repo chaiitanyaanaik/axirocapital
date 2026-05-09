@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
 
 export type PublicSchema = {
   public: {
@@ -13,6 +13,7 @@ export type PublicSchema = {
           session_id: string;
           user_id: string | null;
           idempotency_key: string;
+          env: string;
           source: string | null;
           lead_stage: string | null;
           top_scenarios: string[] | null;
@@ -27,6 +28,7 @@ export type PublicSchema = {
           session_id: string;
           user_id?: string | null;
           idempotency_key: string;
+          env?: string;
           source?: string | null;
           lead_stage?: string | null;
           top_scenarios?: string[] | null;

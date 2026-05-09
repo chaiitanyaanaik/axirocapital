@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 
+import { getDeploymentEnv } from "@/lib/admin/deploymentEnv";
 import { calculateEligibilityResult } from "@/lib/eligibility/scoring";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
 
@@ -63,6 +64,7 @@ export async function POST(req: Request) {
         credit_bucket: credit,
         tier: result.tier,
         score: result.score,
+        app_env: getDeploymentEnv(),
       },
       created_at: new Date().toISOString(),
     });

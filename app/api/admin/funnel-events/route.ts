@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 
 import { ADMIN_SESSION_COOKIE, verifyAdminSessionToken } from "@/lib/admin/auth";
 import { getDeploymentEnv } from "@/lib/admin/deploymentEnv";
-import { decryptPhone } from "@/lib/loanInsight/crypto";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
 
 const parseCookies = (cookieHeader: string | null): Record<string, string> => {
@@ -14,6 +13,8 @@ const parseCookies = (cookieHeader: string | null): Record<string, string> => {
     }),
   );
 };
+
+const FUNNEL_EVENT_NAMES = ["fast_capital_progress", "fast_capital_abandon"] as const;
 
 export async function GET(req: Request) {
   const cookies = parseCookies(req.headers.get("cookie"));
@@ -30,39 +31,33 @@ export async function GET(req: Request) {
   const deploymentEnv = getDeploymentEnv();
 
   const { data, error } = await supabase
-    .from("leads")
-    .select("id, source, lead_stage, created_at, metadata_json, phone_encrypted, phone_hash, session_id")
-    .eq("env", deploymentEnv)
-    .eq("source", "eligibility")
+    .from("loan_insight_events")
+    .select("id, event_name, session_id, payload, created_at")
+    .in("event_name", [...FUNNEL_EVENT_NAMES])
     .order("created_at", { ascending: false })
-    .limit(200);
+    .limit(800);
 
   if (error) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
   }
 
-  const leads = (data ?? []).map((row) => {
-    const metadata = (row.metadata_json ?? {}) as Record<string, unknown>;
-    return {
+  const payloadEnv = (payload: unknown): string | null => {
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) return null;
+    const v = (payload as Record<string, unknown>).app_env;
+    return typeof v === "string" ? v : null;
+  };
+
+  const events = (data ?? [])
+    .filter((row) => payloadEnv(row.payload) === deploymentEnv)
+    .slice(0, 500)
+    .map((row) => ({
       id: row.id,
       created_at: row.created_at,
-      source: row.source,
-      lead_stage: row.lead_stage,
+      event_name: row.event_name,
       session_id: row.session_id,
-      phone: decryptPhone(row.phone_encrypted),
-      phone_hash: row.phone_hash,
-      name: metadata.name ?? null,
-      email: metadata.email ?? null,
-      company_name: metadata.company_name ?? null,
-      tier: metadata.tier ?? null,
-      score: metadata.score ?? null,
-      turnover_bucket: metadata.turnover_bucket ?? null,
-      vintage_bucket: metadata.vintage_bucket ?? null,
-      gst_bucket: metadata.gst_bucket ?? null,
-      emi_bucket: metadata.emi_bucket ?? null,
-      credit_bucket: metadata.credit_bucket ?? null,
-    };
-  });
+      env: payloadEnv(row.payload) ?? deploymentEnv,
+      payload: row.payload as Record<string, unknown> | null,
+    }));
 
-  return NextResponse.json({ ok: true, leads, deployment_env: deploymentEnv });
+  return NextResponse.json({ ok: true, events, deployment_env: deploymentEnv });
 }

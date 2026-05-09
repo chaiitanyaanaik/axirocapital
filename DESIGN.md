@@ -167,11 +167,10 @@ The top navigation should be a "Floating Dock"—a glassmorphic pill or bar that
 
 These notes capture the current Home direction so design and implementation stay aligned:
 
-- Hero is reference-matched to `Home/code 2.html` and `Home/screen 2.png`
-- Left column uses a high-contrast headline with emerald emphasis on the second line
-- Hero supports one primary CTA only: `Talk to an Expert`
-- Hero right column uses an editorial image card plus a floating glass comparison card
-- Floating card compares `Without Axiro` vs `With Axiro` loan cost outcomes
-- Mobile behavior centers the floating card and constrains width to viewport
-- Process section heading copy is `How we help`
-- The previously used dark `Axiro Engine` module is intentionally removed
+- Source of truth is the live component `components/home/HomePage.tsx`
+- Hero keeps a high-contrast two-line headline with emerald emphasis on line two
+- Current hero copy is `Stop chasing lenders` and `Get working capital faster`
+- Hero supports a single primary CTA: `Check My Eligibility`
+- Layout is intentionally single-column and center-aligned in the hero region
+- Home keeps the `How this works` section directly below hero
+- Footer is intentionally minimal (`© 2026 Axiro Capital`)

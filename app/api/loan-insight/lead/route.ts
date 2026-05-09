@@ -1,9 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 
+import { getDeploymentEnv } from "@/lib/admin/deploymentEnv";
 import { encryptPhone, hashForIdempotency, hasEncryptionKey } from "@/lib/loanInsight/crypto";
 import { hashPhone, maskPhone } from "@/lib/loanInsight/privacy";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
+import { validateIndianMobile } from "@/lib/validation/mobile";
 
 type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[];
 
@@ -39,6 +41,7 @@ type StoredLead = {
 const idempotencyMap = new Map<string, StoredLead>();
 const inMemoryPrimaryDb = new Map<string, StoredLead>();
 const isProduction = process.env.NODE_ENV === "production";
+const leadEnv = getDeploymentEnv();
 
 const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -64,11 +67,7 @@ const reportCritical = async (message: string, context: Record<string, unknown>)
 };
 
 const validatePayload = (body: Partial<LeadPayload>): body is LeadPayload =>
-  Boolean(
-    body.phone &&
-      body.sessionId &&
-      body.phone.replace(/\D/g, "").length >= 10,
-  );
+  Boolean(body.phone && body.sessionId && validateIndianMobile(body.phone).isValid);
 
 const persistLead = async (lead: StoredLead): Promise<void> => {
   const supabase = getSupabaseAdminClient();
@@ -86,6 +85,7 @@ const persistLead = async (lead: StoredLead): Promise<void> => {
       session_id: lead.sessionId,
       user_id: lead.userId ?? null,
       idempotency_key: lead.idempotencyKey,
+      env: leadEnv,
       source: lead.source ?? "loan_insight",
       lead_stage: lead.leadStage ?? null,
       top_scenarios: lead.topScenarios ?? null,
@@ -111,6 +111,7 @@ const persistLead = async (lead: StoredLead): Promise<void> => {
       phone_masked: lead.phoneMasked,
       phone_hash: lead.phoneHash,
       lead_stage: lead.leadStage ?? null,
+      app_env: leadEnv,
     },
     created_at: lead.createdAt,
   });
@@ -146,7 +147,8 @@ export async function POST(req: Request) {
     );
   }
 
-  const normalizedPhone = body.phone.trim();
+  const phoneValidation = validateIndianMobile(body.phone);
+  const normalizedPhone = phoneValidation.normalized10;
   const phoneHash = hashPhone(normalizedPhone);
   const derivedIdempotency = hashForIdempotency(body.sessionId, phoneHash);
   const key = `${body.sessionId}:${body.idempotencyKey ?? derivedIdempotency}`;

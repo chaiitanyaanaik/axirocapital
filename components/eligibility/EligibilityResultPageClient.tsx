@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 
 import { CALENDLY_URL } from "@/components/fast-capital/copy";
 import { deriveIndicativeTerms, type EligibilityBucketRequest, type EligibilityResult } from "@/lib/eligibility/scoring";
+import { validateIndianMobile } from "@/lib/validation/mobile";
 
 type StoredEligibilityResult = {
   sessionId: string;
@@ -39,10 +40,11 @@ export function EligibilityResultPageClient() {
   }, [sid]);
 
   const normalizedName = contact.name.trim();
-  const normalizedPhone = contact.phone.replace(/\D/g, "");
+  const phoneValidation = useMemo(() => validateIndianMobile(contact.phone), [contact.phone]);
+  const normalizedPhone = phoneValidation.normalized10;
   const normalizedEmail = contact.email.trim();
   const isNameValid = normalizedName.length >= 2;
-  const isPhoneValid = /^[6-9]\d{9}$/.test(normalizedPhone);
+  const isPhoneValid = phoneValidation.isValid;
   const isEmailValid =
     normalizedEmail.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail);
   const canSubmit = !!stored && isNameValid && isPhoneValid && !isSubmitting;
@@ -203,7 +205,7 @@ export function EligibilityResultPageClient() {
             </button>
             {!isPhoneValid && contact.phone.trim().length > 0 ? (
               <p className="mt-2 text-center text-xs font-medium text-red-600">
-                Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9.
+                {phoneValidation.error ?? "Enter a valid mobile number."}
               </p>
             ) : null}
             {!isEmailValid && normalizedEmail.length > 0 ? (

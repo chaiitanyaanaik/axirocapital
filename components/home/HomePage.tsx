@@ -41,6 +41,13 @@ const HOW_IT_WORKS_STEPS = [
   },
 ] as const;
 
+/** Nav “Check Eligibility” → loan quote (path only) */
+const LOAN_QUOTE_NAV_HREF = "/loan-quote";
+
+/** Hero “Check My Eligibility” → loan quote with UTM attribution */
+const LOAN_QUOTE_HOME_HREF =
+  "/loan-quote?utm_source=axirocapital.com&utm_medium=homepage&utm_campaign=check_eligibility";
+
 export function HomePage() {
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#f9fbfc] text-[#191c1d]">
@@ -51,7 +58,7 @@ export function HomePage() {
         </Link>
         <Link
           className="rounded-full bg-primary-container px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-200 transition hover:bg-emerald-600"
-          href="/eligibility"
+          href={LOAN_QUOTE_NAV_HREF}
         >
           Check Eligibility
         </Link>
@@ -72,31 +79,17 @@ export function HomePage() {
           </div>
           <h1 className="text-[2.15rem] font-extrabold leading-[1.05] tracking-tight text-slate-900 [text-wrap:balance] sm:text-6xl sm:leading-[1.02] lg:text-[74px] lg:tracking-[-0.03em]">
             <span className="block">Stop chasing lenders</span>
-            <span className="block text-primary-container">
-              Get to{" "}
-              <span className="inline-block px-0.5 leading-none">Yes</span>{" "}
-              faster
-            </span>
+            <span className="block text-primary-container">Get working capital faster</span>
           </h1>
           <p className="max-w-3xl text-base font-medium leading-relaxed text-slate-600 sm:text-lg">
-            Most loans don’t fail because the business is weak. They fail because the case isn’t structured the
-            way lenders evaluate risk.
+            Built for GST-registered businesses with ₹1 Cr+ annual revenue
           </p>
-          <div className="flex w-full flex-col items-stretch justify-center gap-4 pt-2 sm:flex-row sm:items-stretch sm:gap-5">
+          <div className="flex w-full flex-col items-center justify-center gap-4 pt-2">
             <Link
-              className="w-full rounded-xl bg-primary-container px-8 py-4 text-center text-sm font-semibold uppercase tracking-[0.05em] text-white shadow-xl shadow-emerald-200/50 transition-all hover:-translate-y-0.5 hover:bg-emerald-600 sm:max-w-[360px]"
-              href="/eligibility"
+              className="w-full max-w-[360px] rounded-xl bg-primary-container px-8 py-4 text-center text-sm font-semibold uppercase tracking-[0.05em] text-white shadow-xl shadow-emerald-200/50 transition-all hover:-translate-y-0.5 hover:bg-emerald-600 sm:w-auto sm:min-w-[280px]"
+              href={LOAN_QUOTE_HOME_HREF}
             >
               Check My Eligibility
-            </Link>
-            <Link
-              className="w-full rounded-2xl border-2 border-slate-300 bg-white px-8 py-3 text-center text-slate-700 shadow-md shadow-slate-200/50 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-lg active:translate-y-0 sm:max-w-[360px]"
-              href="https://calendly.com/chaiitanyaanaik/30min"
-            >
-              <span className="block text-sm font-semibold uppercase tracking-[0.05em]">REVIEW MY CASE</span>
-              <span className="mt-1 block text-[11px] font-medium normal-case tracking-normal text-slate-500">
-                For ₹30L+ loans or complex scenarios
-              </span>
             </Link>
           </div>
           <p className="text-[14px] font-medium text-slate-400">No documents needed. No commitment required.</p>

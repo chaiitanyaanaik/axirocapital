@@ -27,6 +27,15 @@ export function FastCapitalPageClient({ fundingDateLabel }: { fundingDateLabel: 
           <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-emerald-200/40 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -right-16 h-56 w-56 rounded-full bg-sky-100/40 blur-3xl" />
           <div className="mx-auto max-w-4xl">
+            <div className="mx-auto mb-5 inline-flex max-w-full items-center justify-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/90 px-3 py-1.5 text-xs font-semibold text-emerald-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] sm:mb-6 sm:px-4 sm:py-2 sm:text-sm">
+              <span
+                className="material-symbols-outlined text-[18px] text-emerald-600"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
+                verified
+              </span>
+              <span>For GST business with ₹1 CR+ annual turnover</span>
+            </div>
             <h1 className="text-[2.15rem] font-extrabold leading-[1.05] tracking-tight text-slate-900 [text-wrap:balance] sm:text-5xl sm:leading-[1.08] lg:text-[56px] lg:tracking-[-0.02em]">
               {heroBankHeadlinePrefix}
             </h1>
@@ -69,7 +78,9 @@ export function FastCapitalPageClient({ fundingDateLabel }: { fundingDateLabel: 
           </div>
         </section>
 
-        <section className="relative z-10 mx-auto max-w-[1280px] px-4 pb-20 pt-10 sm:px-6 sm:pb-24 sm:pt-12">
+        <div className="relative z-10">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-transparent via-emerald-50/40 to-sky-50/50" />
+          <section className="mx-auto max-w-[1280px] px-4 pb-20 pt-14 sm:px-6 sm:pb-24 sm:pt-16">
           <div className="mx-auto mb-7 max-w-3xl text-center sm:mb-8">
             <h2 className="text-[2.05rem] font-extrabold leading-[1.12] tracking-tight text-slate-900 sm:text-3xl">
               {sectorsSection.title}
@@ -93,7 +104,8 @@ export function FastCapitalPageClient({ fundingDateLabel }: { fundingDateLabel: 
               </div>
             ))}
           </div>
-        </section>
+          </section>
+        </div>
 
         <footer className="relative z-10 mt-4 border-t border-slate-200 px-4 py-10 text-center sm:mt-6 sm:px-6 sm:py-12">
           <p className="text-sm font-semibold text-slate-500">© 2026 Axiro Capital</p>

@@ -363,6 +363,14 @@
 <script>
   // ================ STATE ================
   const answers = { turnover: null, vintage: null, gst: null, emi: null, credit: null };
+  const normalizePhone = (value) => String(value || "").replace(/\D/g, "");
+  const normalizeTo10 = (value) => {
+    const digits = normalizePhone(value);
+    if (digits.length === 12 && digits.startsWith("91")) return digits.slice(2);
+    if (digits.length === 11 && digits.startsWith("0")) return digits.slice(1);
+    return digits;
+  };
+  const isValidMobile = (value) => /^[6-9]\d{9}$/.test(normalizeTo10(value));
 
   // ================ SCORE TABLES (must match Excel & backend) ================
   const TURNOVER_SCORE = [4, 10, 18, 23, 25];   // 5 buckets, max 25
@@ -463,7 +471,12 @@
       return;
     }
 
-    console.log('Lead submitted:', { name, phone, email, co, answers });
+    if (!isValidMobile(phone)) {
+      alert('Please enter a valid 10-digit Indian mobile number starting with 6-9.');
+      return;
+    }
+
+    console.log('Lead submitted:', { name, phone: normalizeTo10(phone), email, co, answers });
     alert(`Thanks ${name}! A credit advisor will reach out within 24 hours. (PoC: data logged to console.)`);
   }
 

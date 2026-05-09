@@ -28,6 +28,7 @@ import {
   scenarioLabel,
 } from "@/lib/loanInsight/questionnaire";
 import { trackEvent } from "@/lib/gtag";
+import { validateIndianMobile } from "@/lib/validation/mobile";
 
 const sessionId =
   typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -58,6 +59,10 @@ export function LoanInsightFlow() {
   const [selectedGate3Option, setSelectedGate3Option] = useState<string | null>(null);
   const [analyzingUntil, setAnalyzingUntil] = useState<number>(0);
   const trackedCount = useRef(0);
+
+  const phoneValidation = useMemo(() => validateIndianMobile(phone), [phone]);
+  const normalizedPhone = phoneValidation.normalized10;
+  const isPhoneValid = phoneValidation.isValid;
 
   const gate1Question = useMemo(() => getNextGate1Question(engineState), [engineState]);
   const gate1OptionItems = useMemo(
@@ -160,7 +165,7 @@ export function LoanInsightFlow() {
     setLeadError(null);
     setIsSubmittingLead(true);
     try {
-      let next = await submitLeadWithRetry(engineState, phone, submitLead, 2);
+      let next = await submitLeadWithRetry(engineState, normalizedPhone, submitLead, 2);
       const latestEvent = next.events[next.events.length - 1];
       const leadFailed = latestEvent?.name === "lead_submit_failed";
       if (next.state === "awaiting_gate3" && !next.gate3Question) {
@@ -444,11 +449,14 @@ export function LoanInsightFlow() {
                 placeholder="Enter phone number"
                 value={phone}
               />
+              {!isPhoneValid && phone.trim().length > 0 ? (
+                <p className="mt-2 text-sm text-red-600">{phoneValidation.error ?? "Enter a valid mobile number."}</p>
+              ) : null}
               {leadError ? <p className="mt-2 text-sm text-red-600">{leadError}</p> : null}
               <div className="mt-4 flex flex-wrap gap-3">
                 <button
                   className="rounded-xl bg-primary-container px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
-                  disabled={phone.trim().length < 10 || isSubmittingLead}
+                  disabled={!isPhoneValid || isSubmittingLead}
                   onClick={onLeadSubmit}
                   type="button"
                 >

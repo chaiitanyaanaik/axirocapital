@@ -1,0 +1,10 @@
+.DS_Store
+.cursor/
+.tmp_*
+.vercel_env_values.tmp
+*.log
+
+# Local env files should never be uploaded
+.env
+.env.*
+!.env.example
